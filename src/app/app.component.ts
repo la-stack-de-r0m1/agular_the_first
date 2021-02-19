@@ -35,6 +35,7 @@ export class AppComponent implements OnInit{
   }
 
   onEteindre() {
-    this.appareilService.switchOffAll();
+    if (confirm('Certains de tout éteindre?'))
+      this.appareilService.switchOffAll();
   }
 }
