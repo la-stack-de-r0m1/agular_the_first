@@ -1,5 +1,10 @@
+import { Subject } from "rxjs-compat/Subject";
+
 export class AppareilService {
-    appareils = [
+
+    appareilSubject = new Subject<any[]>();
+
+    private appareils = [
         {
             id: 1,
           name: 'Machine à laver',
@@ -17,12 +22,20 @@ export class AppareilService {
         }
     ];
 
+    emitAppareilSubject() {
+        this.appareilSubject.next(
+            this.appareils.slice()
+        );
+    }
+
     switchOnAll() {
         this.changeStatus('allumé');
+        this.emitAppareilSubject();
     }
 
     switchOffAll() {
         this.changeStatus('éteint');
+        this.emitAppareilSubject();
     }
 
     private changeStatus(newStatus: string) {
@@ -33,10 +46,12 @@ export class AppareilService {
 
     switchOnOne(index: number) {
         this.changeStatusOne(index, 'allumé');
+        this.emitAppareilSubject();
     }
 
     switchOffONe(index: number) {
         this.changeStatusOne(index, 'éteint');
+        this.emitAppareilSubject();
     }
 
     private changeStatusOne(index: number, newStatus: string) {
