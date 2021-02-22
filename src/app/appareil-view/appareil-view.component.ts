@@ -46,4 +46,12 @@ export class AppareilViewComponent implements OnInit {
     if (confirm('Certains de tout éteindre?'))
       this.appareilService.switchOffAll();
   }
+
+  onSave() {
+    this.appareilService.saveAppareilsToServer();
+  }
+
+  onFetch() {
+    this.appareilService.getAppareilsFromServer();
+  }
 }

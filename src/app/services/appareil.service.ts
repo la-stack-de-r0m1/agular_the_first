@@ -1,31 +1,27 @@
 import { Subject } from "rxjs-compat/Subject";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from "@angular/core";
 
+class Appareil {
+    constructor(public id: number, 
+        public name: string,
+        public status: string) {}
+}
+
+@Injectable()
 export class AppareilService {
 
     appareilSubject = new Subject<any[]>();
 
-    private appareils = [
-        {
-            id: 1,
-          name: 'Machine à laver',
-          status: 'éteint'
-        },
-        {
-            id: 2,
-          name: 'Télévision',
-          status: 'allumé'
-        },
-        {
-            id: 3,
-          name: 'Machine à laver',
-          status: 'éteint'
-        }
-    ];
+    private appareils!: Appareil[];
+
+    constructor(private httpClient: HttpClient) {}
 
     emitAppareilSubject() {
-        this.appareilSubject.next(
-            this.appareils.slice()
-        );
+        if (this.appareils && this.appareils.length)
+            this.appareilSubject.next(
+                this.appareils.slice()
+            );
     }
 
     switchOnAll() {
@@ -79,5 +75,32 @@ export class AppareilService {
         
         this.appareils.push(appareilObject);
         this.emitAppareilSubject();
+    }
+
+    saveAppareilsToServer() {
+        this.httpClient
+            .put('', this.appareils)
+            .subscribe(
+                () => {
+                    console.log("Enregistrement terminé !")
+                },
+                (error) => {
+                    console.log('Erreur de sauvegarde ! ' + error);
+                }
+            );
+    }
+
+    getAppareilsFromServer() {
+        this.httpClient
+            .get<any[]>('')
+            .subscribe(
+                (response) => {
+                    this.appareils = response;
+                    this.emitAppareilSubject();
+                },
+                (error) => {
+                    console.log('Erreur de chargement : ' + error)
+                }
+            );
     }
 }
